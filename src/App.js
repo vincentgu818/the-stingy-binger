@@ -8,14 +8,11 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      baseUrl: 'http://www.omdbapi.com/?',
-      apikey: 'apikey=' + 'afe230c0',
-      query: '&t=',
       seriesTitle: '',
       titleReceived: false,
       numEpisodes: '',
       numEpisodesReceived: false,
-      searchUrl: '',
+      omdbUrl: '',
       episodes: []
     }
   }
@@ -25,7 +22,7 @@ class App extends Component {
   handleTitleSubmit = (ev) => {
     ev.preventDefault()
     this.setState({
-      searchUrl: this.state.baseUrl + this.state.apikey + this.state.query + this.state.seriesTitle,
+      omdbUrl: 'http://www.omdbapi.com/?apikey=afe230c0&t=' + this.state.seriesTitle
     }, () => {
       this.fetchEpisodes()
     })
@@ -38,7 +35,7 @@ class App extends Component {
   fetchEpisodes = async () => {
     let totalSeasons, episodes
     // fetch the series' first season
-    let apiCall =  await axios.get(this.state.searchUrl+'&season=1')
+    let apiCall =  await axios.get(this.state.omdbUrl+'&season=1')
       // select and store only the fields relevant to our task
       .then(response => {
         totalSeasons = response.data.totalSeasons
@@ -53,7 +50,7 @@ class App extends Component {
       })
     // fetch subsequent seasons
     for(let i=2; i<=totalSeasons; i++) {
-      apiCall =  await axios.get(this.state.searchUrl+`&season=${i}`)
+      apiCall =  await axios.get(this.state.omdbUrl+`&season=${i}`)
         .then(response => {
           episodes = episodes.concat(response.data.Episodes.map(ep => {
             return {
@@ -86,13 +83,15 @@ class App extends Component {
   appendImages = async (eps) => {
     let episodesWithImages = eps
     for(let i=0; i<episodesWithImages.length; i++) {
-      let imgUrl
+      let imgUrl, imdbUrl
       let ep=episodesWithImages[i]
-      let apiCall = await axios.get(this.state.searchUrl+`&season=${ep.season}&episode=${ep.episode}`)
+      let apiCall = await axios.get(this.state.omdbUrl+`&season=${ep.season}&episode=${ep.episode}`)
         .then(response => {
           imgUrl = response.data.Poster
+          imdbUrl = "https://www.imdb.com/title/"+response.data.imdbID
         })
       episodesWithImages[i].imgUrl = imgUrl
+      episodesWithImages[i].imdbUrl = imdbUrl
     }
     this.setState({
       episodes: episodesWithImages,
@@ -125,6 +124,7 @@ class App extends Component {
         <Episodes
           seriesTitle={this.state.seriesTitle}
           episodes={this.state.episodes}
+          reset={this.reset}
         /> : "" }
       </div>
     )
