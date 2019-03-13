@@ -8,15 +8,20 @@ class Episodes extends Component {
         <div className="episodes">
           {this.props.episodes.map((ep,index) => {
             return (
-              <a href={ep.imdbUrl} target="_blank">
-                <div
-                  key={index}
-                  className="episode">
-                  <img src={ep.imgUrl} alt={ep.title}/>
-                  <div className="episode_title">"{ep.title}"</div>
-                  <div className="episode_details">Season {ep.season} Episode {ep.episode}. Rating: {ep.rating}</div>
-                </div>
-              </a>
+              <div>
+                <a href={ep.imdbUrl} target="_blank">
+                  <div
+                    key={index}
+                    className="episode">
+                    <img src={ep.imgUrl} alt={ep.title}/>
+                    <div className="episode_title">"{ep.title}"</div>
+                    <div className="episode_details">Season {ep.season} Episode {ep.episode}. Rating: {ep.rating}</div>
+                  </div>
+                </a>
+                <button onClick={() => {
+                  this.props.removeEpisode(index)
+                }}>Seen It</button>
+              </div>
             )
           })}
         </div>

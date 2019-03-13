@@ -98,6 +98,13 @@ class App extends Component {
       numEpisodesReceived: true
     })
   }
+  removeEpisode = (index) => {
+    let episodesWithOneRemoved = this.state.episodes;
+    episodesWithOneRemoved.splice(index,1)
+    this.setState({
+      episodes: episodesWithOneRemoved
+    })
+  }
   reset = () => {
     this.setState({
       seriesTitle: '',
@@ -124,6 +131,7 @@ class App extends Component {
         <Episodes
           seriesTitle={this.state.seriesTitle}
           episodes={this.state.episodes}
+          removeEpisode={this.removeEpisode}
           reset={this.reset}
         /> : "" }
       </div>
