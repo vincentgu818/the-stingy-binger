@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios'
 
+import About from "./components/About";
 import SeriesForm from "./components/SeriesForm";
 import Episodes from "./components/Episodes";
 
@@ -35,9 +36,11 @@ class App extends Component {
   fetchEpisodes = async () => {
     let totalSeasons, episodes
     // fetch the series' first season
-    let apiCall =  await axios.get(this.state.omdbUrl+'&season=1')
+    await axios.get(this.state.omdbUrl+'&season=1')
       // select and store only the fields relevant to our task
       .then(response => {
+        console.log(response)
+        if(response.data === "" || response.data.Response === "False") return;
         totalSeasons = response.data.totalSeasons
         episodes = response.data.Episodes.map(ep => {
           return {
@@ -48,9 +51,10 @@ class App extends Component {
           }
         })
       })
+    if(episodes === undefined) return;
     // fetch subsequent seasons
     for(let i=2; i<=totalSeasons; i++) {
-      apiCall =  await axios.get(this.state.omdbUrl+`&season=${i}`)
+      await axios.get(this.state.omdbUrl+`&season=${i}`)
         .then(response => {
           episodes = episodes.concat(response.data.Episodes.map(ep => {
             return {
@@ -85,7 +89,7 @@ class App extends Component {
     for(let i=0; i<episodesWithImages.length; i++) {
       let imgUrl, imdbUrl
       let ep=episodesWithImages[i]
-      let apiCall = await axios.get(this.state.omdbUrl+`&season=${ep.season}&episode=${ep.episode}`)
+      await axios.get(this.state.omdbUrl+`&season=${ep.season}&episode=${ep.episode}`)
         .then(response => {
           imgUrl = response.data.Poster
           imdbUrl = "https://www.imdb.com/title/"+response.data.imdbID
@@ -101,6 +105,9 @@ class App extends Component {
   removeEpisode = (index) => {
     let episodesWithOneRemoved = this.state.episodes;
     episodesWithOneRemoved.splice(index,1)
+    if(episodesWithOneRemoved.length === 0) {
+      this.reset()
+    }
     this.setState({
       episodes: episodesWithOneRemoved
     })
@@ -117,6 +124,8 @@ class App extends Component {
   render() {
     return (
       <div className="container">
+        <h1 className="main_title">The Stingy Binger</h1>
+        <About/>
         <SeriesForm
           handleTitleSubmit={this.handleTitleSubmit}
           seriesTitle={this.state.seriesTitle}

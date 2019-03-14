@@ -8,7 +8,7 @@ class Episodes extends Component {
         <div className="episodes">
           {this.props.episodes.map((ep,index) => {
             return (
-              <div>
+              <div className="episode_container">
                 <a href={ep.imdbUrl} target="_blank">
                   <div
                     key={index}
@@ -18,9 +18,10 @@ class Episodes extends Component {
                     <div className="episode_details">Season {ep.season} Episode {ep.episode}. Rating: {ep.rating}</div>
                   </div>
                 </a>
-                <button onClick={() => {
-                  this.props.removeEpisode(index)
-                }}>Seen It</button>
+                <button
+                  onClick={() => {
+                    this.props.removeEpisode(index)
+                  }}>Watched It</button>
               </div>
             )
           })}
