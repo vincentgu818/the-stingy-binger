@@ -23,7 +23,7 @@ class App extends Component {
   handleTitleSubmit = (ev) => {
     ev.preventDefault()
     this.setState({
-      omdbUrl: 'http://www.omdbapi.com/?apikey=afe230c0&t=' + this.state.seriesTitle
+      omdbUrl: 'https://www.omdbapi.com/?apikey=afe230c0&t=' + this.state.seriesTitle
     }, () => {
       this.fetchEpisodes()
     })
